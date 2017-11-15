@@ -13,6 +13,7 @@ class Company(object):
         self.name = name
         self.sector = sector
         self.sentiment = 0
+
     def set_sentiment(self, sentiment):
         self.sentiment += sentiment
 
@@ -27,14 +28,16 @@ class TwitterClient(object):
             self.auth.verify_credentials()
         except:
             print "error: authentication"
+
     def clean_tweet(self, tweet):
         return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", tweet).split())
+
     def get_tweet_sentiment(self, tweet):
         analysis = TextBlob(self.clean_tweet(tweet))
         # set sentiment
         return analysis.sentiment.polarity
 
-    def get_tweets(self, query, count = 10):
+    def get_tweets(self, query, count = 50):
         tweets = []
         retry = 0
         while(retry < 5):
@@ -44,6 +47,7 @@ class TwitterClient(object):
                 for tweet in fetched_tweets:
                     parsed_tweet = {}
                     parsed_tweet['company'] = query
+                    parsed_tweet['tweet'] = tweet['text']
                     parsed_tweet['sentiment'] = self.get_tweet_sentiment(tweet['text'])
                     tweets.append(parsed_tweet)
 
@@ -58,11 +62,13 @@ class TwitterClient(object):
 
 def main():
     companies = []
-    with open('known.csv', 'r') as f:
+    with open('./static/companyList.csv', 'r') as f:
         reader = csv.reader(f)
         for row in reader:
             companies.append(Company(row[0], row[1], row[2]))
-
+    # create N threads in a pool
+    # each thread will query twitter with the companien info
+    # store in results
     pool = ThreadPool(len(companies))
     api = TwitterClient()
     results = pool.map(api.get_tweets, companies)
@@ -71,8 +77,8 @@ def main():
     pool.join()
     for re in results:
         for r in re:
+            #increment sentiment of company
             companies[next(index for (index, d) in enumerate(companies) if d.name == r['company'].name)].set_sentiment(float(r['sentiment']))
-
     for c in companies:
         print c.name + "|" + str(c.sentiment)
 

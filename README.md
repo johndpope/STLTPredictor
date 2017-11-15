@@ -4,8 +4,7 @@ Will search twitter for the top 500 companies based on name or stock symbol, wil
 
 
 Dependencies:
-`pip install Twython`
-`pip install TextBlob`
+`pip install -r ./static/requirements.txt`
 
 Depending on on your system, you might need to change the limit on open file descriptors allowed.
 
