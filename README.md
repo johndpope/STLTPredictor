@@ -2,10 +2,20 @@
 
 Will search twitter for the top K companies based on name or stock symbol, will then analyze tweet contents and determine sentiment value of the tweet.
 
+Will then obtain stock closing vs opening prices
 
 Dependencies:
-`pip install -r ./static/requirements.txt`
 
-Depending on on your system, you might need to change the limit on open file descriptors allowed.
+  Requires Docker to be installed
 
-You can check with `ulimit -a`, it seems we might need at least ~600, and you can change this with `ulimit -n value`
+To Build:
+
+  run `docker build -t myapp .`
+
+To Run (once finished):
+
+  run `docker run myapp`
+
+To Run a specific script:
+
+  run `docker run myapp python app/twitterExtraction/retrieveTwitterData.py`

@@ -1,2 +1,0 @@
-twython==3.6.0
-textblob==0.13.1
