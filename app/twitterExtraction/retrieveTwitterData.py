@@ -141,10 +141,10 @@ def main():
 
     update_database(companies)
 def get_stock():
-    start = datetime.datetime(2000, 1, 1)
-    end = datetime.datetime(2016, 1, 1)
+    start = datetime(2000, 1, 1)
+    end = datetime(2016, 1, 1)
     df = web.DataReader('TSLA', "yahoo", start, end)
-    print df.head()
+    print df.head(10)
 if __name__ == "__main__":
     #main()
     get_stock()
