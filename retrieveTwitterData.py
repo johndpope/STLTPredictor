@@ -7,6 +7,8 @@ import re
 import data
 from multiprocessing.dummy import Pool as ThreadPool
 import csv
+import pandas_datareader.data as web
+import pandas as pd
 
 class Company(object):
     def __init__(self, symbol, name, sector):
@@ -104,6 +106,8 @@ def update_database(companies):
             dt = datetime.utcnow().strftime('%Y%m%d')
             cur.execute("INSERT INTO Sentiment(value, date_added, company_symbol) VALUES (?, ?, ?);", \
                         (c.sentiment, str(dt), c.symbol))
+    conn.commit()
+    conn.close()
 
 def main():
     # create array of Company objects from selected csv file
@@ -136,6 +140,11 @@ def main():
         print c.name + "|" + str(c.sentiment)
 
     update_database(companies)
-
+def get_stock():
+    start = datetime.datetime(2000, 1, 1)
+    end = datetime.datetime(2016, 1, 1)
+    df = web.DataReader('TSLA', "yahoo", start, end)
+    print df.head()
 if __name__ == "__main__":
-    main()
+    #main()
+    get_stock()
