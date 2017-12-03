@@ -10,17 +10,16 @@ faceDet_four = cv2.CascadeClassifier("haarcascade/haarcascade_frontalface_alt_tr
 
 #emotions = ["neutral", "anger", "contempt", "disgust", "fear", "happy", "sadness", "surprise"] #Define emotions
 
-path_to_img = sys.argv[1]
-path_to_output = sys.argv[2]
+#img_arg = sys.argv[1]
+#img_arg2 = sys.argv[2]
 
-def detect_faces():
+def extract(path_to_img, path_to_output):
     files = glob.glob("%s" % path_to_img) #Get list images at location
-    print "files: ", files
-    filenumber = 0
-    i = 0
+    #print "files: ", files
+
     for f in files:
-	print "f: ", f
-	print "f[-1]", f.split('/')[-1]
+	#print "f: ", f
+	#print "f[-1]", f.split('/')[-1]
 
 	frame = cv2.imread(f) #Open image
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) #Convert image to grayscale
@@ -45,7 +44,7 @@ def detect_faces():
         
         #Cut and save face
         for (x, y, w, h) in facefeatures: #get coordinates and size of rectangle containing face
-            print "face found in file: %s" %f
+            #print "face found in file: %s" %f
             gray = gray[y:y+h, x:x+w] #Cut the frame to size
 
 	    try:
@@ -53,9 +52,14 @@ def detect_faces():
 		cv2.imwrite("%s" % path_to_output, out) #Write image
                 #cv2.imwrite("%s" % (path_to_output, f.split('/')[-1]), out) #Write image
             except:
-               pass #If error, pass file
+               	pass #If error, pass file
 
-        filenumber += 1 #Increment image number
+
+
+	if str(facefeatures) == "":
+		return facefeatures
+	else:
+		return path_to_output
 
 #for emotion in emotions: 
-detect_faces() #Call
+#extract(img_arg, img_arg2) #Call
