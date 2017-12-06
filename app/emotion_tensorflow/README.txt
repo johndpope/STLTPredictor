@@ -62,6 +62,14 @@ Ex. If I just downloaded a Windows video and got the frames using the above soft
 
 	$ python predict.py companies/MSFT extract
 
+Once it finished it will show the prediction result and return it (if function call)
+
+To view extracted images go to directory : 
+	extracted_data/MSFT
+
+To run predictor on the images once they are extracted to get the result only (much faster, takes less than 3 seconds)
+	$ python predict.py extracted_data/MSFT
+
 -------------------------------------------------------------------------------------
 
 To train this classifier
