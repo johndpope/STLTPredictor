@@ -7,8 +7,13 @@ import re
 import data
 from multiprocessing.dummy import Pool as ThreadPool
 import csv
-import pandas_datareader.data as web
-import pandas as pd
+import sys
+sys.path.append("./GetOldTweets-python-master/")
+import got
+from functools import partial
+
+# import pandas_datareader.data as web
+# import pandas as pd
 
 class Company(object):
     def __init__(self, symbol, name, sector):
@@ -45,7 +50,6 @@ class TwitterClient(object):
         """
         analysis = TextBlob(self.clean_tweet(tweet))
         return analysis.sentiment.polarity
-
     def get_tweets(self, query, count = 50):
         tweets = []
         retry = 0
@@ -56,6 +60,7 @@ class TwitterClient(object):
                 stock symbol get sentiment for a tweet, record the company and
                 add to array to be returned
                 """
+
                 fetched_tweets = self.auth.search(q=query.name + " OR " + query.symbol + " -filter:retweets", count=count)
                 fetched_tweets = fetched_tweets['statuses']
                 for tweet in fetched_tweets:
@@ -80,8 +85,27 @@ class TwitterClient(object):
             except TwythonError as e:
                 print e
                 return []
+
+    def get_tweets_from_past(self, query, start, end, count = 200):
+        tweets = []
+
+        """
+        search for tweets or replies that countain the company name or
+        stock symbol get sentiment for a tweet, record the company and
+        add to array to be returned
+        """
+        fetched_tweets = got.manager.TweetManager.getTweets(got.manager.TweetCriteria().setQuerySearch(query.name + " OR " + query.symbol).setSince(start).setUntil(end).setMaxTweets(count))
+
+        for tweet in fetched_tweets:
+            parsed_tweet = {}
+            parsed_tweet['company'] = query
+            parsed_tweet['tweet'] = tweet.text
+            parsed_tweet['sentiment'] = self.get_tweet_sentiment(tweet.text)
+            tweets.append(parsed_tweet)
+
+        return tweets
 def update_database(companies):
-    conn = sqlite3.connect('./static/project_db.sqlite')
+    conn = sqlite3.connect('../static/project_db.sqlite')
     with conn:
         cur = conn.cursor()
         cur.execute("CREATE TABLE IF NOT EXISTS Company (symbol TEXT PRIMARY KEY UNIQUE, name TEXT UNIQUE, sector TEXT, overall_sentiment REAL default 0);")
@@ -112,7 +136,7 @@ def update_database(companies):
 def main():
     # create array of Company objects from selected csv file
     companies = []
-    with open('./static/known.csv', 'r') as f:
+    with open('../static/known.csv', 'r') as f:
         reader = csv.reader(f)
         for row in reader:
             companies.append(Company(row[0], row[1], row[2]))
@@ -124,7 +148,8 @@ def main():
     pool = ThreadPool(len(companies))
     api = TwitterClient()
     results = pool.map(api.get_tweets, companies)
-
+    from_past = partial(api.get_tweets_from_past, start="2017-11-17", end="2017-11-24")
+    results = pool.map(from_past, companies)
     pool.close()
     pool.join()
 
@@ -135,16 +160,25 @@ def main():
                 companies[next(index for (index, d) in enumerate(companies) if d.name == r['company'].name)].set_sentiment(float(r['sentiment']))
             except:
                 continue
+        #average out that companies sentiment on a tweet by tweet basis
+        try:
+            companies[next(index for (index, d) in enumerate(companies) if d.name == re[0]['company'].name)].sentiment = companies[next(index for (index, d) in enumerate(companies) if d.name == re[0]['company'].name)].sentiment / len(re)
+        except:
+            continue
+
 
     for c in companies:
         print c.name + "|" + str(c.sentiment)
 
     update_database(companies)
+
 def get_stock():
-    start = datetime(2000, 1, 1)
-    end = datetime(2016, 1, 1)
-    df = web.DataReader('TSLA', "yahoo", start, end)
-    print df.head(10)
+    #2017, 5, 3
+    #2017, 11, 17
+    start = datetime(2017, 11, 13)
+    end = datetime(2017, 11, 17)
+    # df = web.DataReader('TSLA', "yahoo", start, end)
+    # print df.head()
 if __name__ == "__main__":
-    #main()
-    get_stock()
+    main()
+    #get_stock()
