@@ -1,2 +1,2 @@
-model_checkpoint_path: "/home/raidel/Desktop/emotion_opencv_tensorflow2/emotion-model"
-all_model_checkpoint_paths: "/home/raidel/Desktop/emotion_opencv_tensorflow2/emotion-model"
+model_checkpoint_path: "./emotion-model"
+all_model_checkpoint_paths: "./emotion-model"
