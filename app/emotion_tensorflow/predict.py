@@ -9,8 +9,9 @@ os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 #cmpny_name='TSLA'
 
 classes = ['anger','disgust', 'happy', 'neutral', 'surprise']
+class_weight = [-1.0, -0.5, 1.0, 0.0, 0.5]
 
-def predict(cmpny_name):
+def predict(cmpny_name, mode):
 	# First, pass the path of the image
 	dir_path = os.path.dirname(os.path.realpath(__file__))
 	#filename = dir_path + '/' + cmpny_path + '/' + image_path
@@ -47,8 +48,12 @@ def predict(cmpny_name):
 		
 		images = [] # Reading the image using OpenCV
 		
-		#img_location = extract(predict_img, "extracted_data/" + cmpny_name + "/" + predict_img.split("/")[-1])
-		img_location = extract(predict_img, predict_img.split("/")[-1])
+		#img_location = extract(predict_img, predict_img.split("/")[-1])
+
+		if mode is 1:
+			img_location = extract(predict_img, "extracted_data/" + cmpny_name.split("/")[-1] + "/" + predict_img.split("/")[-1])
+		else:		
+			img_location = predict_img
 
 		if img_location == '':
 			img_location = predict_img
@@ -61,8 +66,8 @@ def predict(cmpny_name):
 		image = cv2.imread(img_location)
 		#image = extract(filename, "/extracted_data/" + cmpny_path + "pic1.jpg")
 		
-		if img_location_remove:
-			os.remove(img_location)
+		#if img_location_remove:
+			#os.remove(img_location)
 
 		# Resizing the image to our desired size and preprocessing will be done exactly as done during training
 		image = cv2.resize(image, (image_size, image_size),0,0, cv2.INTER_LINEAR)
@@ -100,6 +105,24 @@ def predict(cmpny_name):
 	prediction_val = max(predictions, key=predictions.get)
 	#print "max prediction:", prediction_val
 
+	total_predict = 0
+	for emotion in classes:
+		total_predict += predictions[emotion]
+
+	#print "total_predict:", total_predict
+
+	decision = 0.0
+	index = 0;	
+	for emotion in classes:
+		#print emotion, ":", float(predictions[emotion])
+		#print "predictions[emotion]/total_predict: ", float(predictions[emotion])/float(total_predict)
+		decision += float(predictions[emotion])/float(total_predict)*class_weight[index]
+		#print "decision: ", '{:.10%}'.format(decision)
+		index += 1
+
+	print "decision:", decision
+
+	'''
 	decision = 0
 	if prediction_val == "neutral" or len(predict_files) == 0:
 		print "NOT SURE IF BUY!"
@@ -110,14 +133,21 @@ def predict(cmpny_name):
 	else:
 		print "DO NOT BUY!"
 		decision = -1
+	'''
 
 	return decision
 	#return something here, max prediction for now
 		
 
 if __name__ == "__main__":
-	img_path = sys.argv[1]
-	#predict("companies/TEST_DIR")	
-	predict(img_path)	
-	
 
+	mode = -1
+	if len(sys.argv) == 3:
+		mode = 1
+	else:
+		mode = 0;
+
+	img_path = sys.argv[1]
+	
+	#predict("companies/TEST_DIR")	
+	predict(img_path, mode)	

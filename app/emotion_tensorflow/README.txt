@@ -34,21 +34,36 @@ Installing required python packages (2 options to install, use option (2) if opt
 Classify an Image using the trained dataset (predict):				    
 -------------------------------------------------------------------------------------
 
-[usage] 
-Run the following command to predict the emotion of a face:
-	$ python predict.py <path/to/img/img.jpg>
+[usage] 2 modes (extract faces, and do not extract faces)
 
-	- Example run command to classify image 'img1_face.jpg':
-	    $ python predict.py img1_face.jpg
+[Mode 1: Extract faces]
+Run the following command to extract and predict the emotions of faces in company folder:
+	$ python predict.py <path/to/stock> extract
 
-[optional but strongly encouraged to get correct prediction] 
-Before an image is used to predict emotion, we should extract a face from the image, run as follow:
-	$ python extract_faces.py <path/to/img/img.jpg> <path/to/output/img/img.jpg>
+	- Example run command to ectract and predict TSLA images:
+	    $ python predict.py companies/TSLA extract
 
-	An example run, assuming we are reading image from current directory, and writing new image to a directory called 'faces', on an image called 'img1.jpg':
-	    $ python extract_faces.py ./img1.jpg faces/img1_face.jpg
+[Mode 2: Do not extract faces, assume already extracted (better for performance)]
+Run the following command to predict the emotions of faces in company folder:
+	$ python predict.py <path/to/stock>
 
+	- Example run command to predict TSLA images:
+	    $ python predict.py extracted_data/TSLA
+-------------------------------------------------------------------------------------
+
+1) To extract videos:
+
+I downloaded this application to extract videos into frames:
+	https://www.dvdvideosoft.com/products/dvd/Free-Video-to-JPG-Converter.htm
+
+Once I have all the frames in a directory (the application above does this), I save the directory of frames inside of companies(rename it using the stock name if you want) and then just run the command above to extract and predict.
+
+Ex. If I just downloaded a Windows video and got the frames using the above software, I would save the folder that software created inside of companies (inside of this project) and rename it MSFT. Then to run predict on that directory we just run the following command:
+
+	$ python predict.py companies/MSFT extract
 
 -------------------------------------------------------------------------------------
+
+To train this classifier
 
 I will be posting the images along with the way to train the model another day, I have to store the images somewhere else since the file will probably be to big for github. 

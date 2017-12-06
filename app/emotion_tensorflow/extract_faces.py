@@ -1,6 +1,7 @@
 import cv2
 import glob
 import sys
+import os
 
 
 faceDet = cv2.CascadeClassifier("haarcascade/haarcascade_frontalface_default.xml")
@@ -16,6 +17,11 @@ faceDet_four = cv2.CascadeClassifier("haarcascade/haarcascade_frontalface_alt_tr
 def extract(path_to_img, path_to_output):
     files = glob.glob("%s" % path_to_img) #Get list images at location
     #print "files: ", files
+
+    directory = '/'.join(path_to_output.split('/')[:-1])
+    print "create directory:", directory
+    if not os.path.exists(directory):
+	os.makedirs(directory)
 
     for f in files:
 	#print "f: ", f
