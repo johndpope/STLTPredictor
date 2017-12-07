@@ -147,8 +147,7 @@ def main():
     """
     pool = ThreadPool(len(companies))
     api = TwitterClient()
-    results = pool.map(api.get_tweets, companies)
-    from_past = partial(api.get_tweets_from_past, start="2017-11-17", end="2017-11-24")
+    from_past = partial(api.get_tweets_from_past, start="2014-07-01", end="2014-07-08")
     results = pool.map(from_past, companies)
     pool.close()
     pool.join()
@@ -172,13 +171,5 @@ def main():
 
     update_database(companies)
 
-def get_stock():
-    #2017, 5, 3
-    #2017, 11, 17
-    start = datetime(2017, 11, 13)
-    end = datetime(2017, 11, 17)
-    # df = web.DataReader('TSLA', "yahoo", start, end)
-    # print df.head()
 if __name__ == "__main__":
     main()
-    #get_stock()
