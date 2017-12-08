@@ -1,14 +1,14 @@
 from twython import Twython, TwythonError, TwythonRateLimitError
 import sqlite3
 import time
-from datetime import datetime
+import datetime
 from textblob import TextBlob
 import re
 import data
 from multiprocessing.dummy import Pool as ThreadPool
 import csv
 import sys
-sys.path.append("./GetOldTweets-python-master/")
+sys.path.append("/app/app/twitterExtraction/GetOldTweets-python-master/")
 import got
 from functools import partial
 
@@ -50,41 +50,41 @@ class TwitterClient(object):
         """
         analysis = TextBlob(self.clean_tweet(tweet))
         return analysis.sentiment.polarity
-    def get_tweets(self, query, count = 50):
-        tweets = []
-        retry = 0
-        while(retry < 5):
-            try:
-                """
-                search for tweets or replies that countain the company name or
-                stock symbol get sentiment for a tweet, record the company and
-                add to array to be returned
-                """
-
-                fetched_tweets = self.auth.search(q=query.name + " OR " + query.symbol + " -filter:retweets", count=count)
-                fetched_tweets = fetched_tweets['statuses']
-                for tweet in fetched_tweets:
-                    parsed_tweet = {}
-                    parsed_tweet['company'] = query
-                    parsed_tweet['tweet'] = tweet['text'].encode('utf8')
-                    parsed_tweet['sentiment'] = self.get_tweet_sentiment(tweet['text'].encode('utf8'))
-                    tweets.append(parsed_tweet)
-
-                return tweets
-            except TwythonRateLimitError as e:
-                """
-                if we hit the rate limit, get the UTC epoch formatted time when
-                the limit will be reset, and wait for that long retry this 5
-                times, there is sort of a race condition here, as all remaining
-                threads in the pool will compete for resources (querying twitter)
-                """
-                to_sleep = float(self.auth.get_lastfunction_header('x-rate-limit-reset')) - time.time()
-                print "need to sleep for {0} seconds".format(int(to_sleep))
-                retry += 1
-                time.sleep(to_sleep)
-            except TwythonError as e:
-                print e
-                return []
+    # def get_tweets(self, query, count = 50):
+    #     tweets = []
+    #     retry = 0
+    #     while(retry < 5):
+    #         try:
+    #             """
+    #             search for tweets or replies that countain the company name or
+    #             stock symbol get sentiment for a tweet, record the company and
+    #             add to array to be returned
+    #             """
+    #
+    #             fetched_tweets = self.auth.search(q=query.name + " OR " + query.symbol + " -filter:retweets", count=count)
+    #             fetched_tweets = fetched_tweets['statuses']
+    #             for tweet in fetched_tweets:
+    #                 parsed_tweet = {}
+    #                 parsed_tweet['company'] = query
+    #                 parsed_tweet['tweet'] = tweet['text'].encode('utf8')
+    #                 parsed_tweet['sentiment'] = self.get_tweet_sentiment(tweet['text'].encode('utf8'))
+    #                 tweets.append(parsed_tweet)
+    #
+    #             return tweets
+    #         except TwythonRateLimitError as e:
+    #             """
+    #             if we hit the rate limit, get the UTC epoch formatted time when
+    #             the limit will be reset, and wait for that long retry this 5
+    #             times, there is sort of a race condition here, as all remaining
+    #             threads in the pool will compete for resources (querying twitter)
+    #             """
+    #             to_sleep = float(self.auth.get_lastfunction_header('x-rate-limit-reset')) - time.time()
+    #             print "need to sleep for {0} seconds".format(int(to_sleep))
+    #             retry += 1
+    #             time.sleep(to_sleep)
+    #         except TwythonError as e:
+    #             print e
+    #             return []
 
     def get_tweets_from_past(self, query, start, end, count = 200):
         tweets = []
@@ -133,22 +133,30 @@ def update_database(companies):
     conn.commit()
     conn.close()
 
-def main():
+def main(company, start_date):
     # create array of Company objects from selected csv file
     companies = []
-    with open('../static/known.csv', 'r') as f:
+    with open('/app/app/static/companyList.csv', 'r') as f:
         reader = csv.reader(f)
         for row in reader:
             companies.append(Company(row[0], row[1], row[2]))
+
+    mycomp = [x for x in companies if x.symbol == company]
+
+
     """
     create N threads in a pool
     each thread will query twitter with the company info
     store in results
     """
-    pool = ThreadPool(len(companies))
+    start_d = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+    end_d = start_d + datetime.timedelta(days=7)
+
+
+    pool = ThreadPool(len(mycomp))
     api = TwitterClient()
-    from_past = partial(api.get_tweets_from_past, start="2014-07-01", end="2014-07-08")
-    results = pool.map(from_past, companies)
+    from_past = partial(api.get_tweets_from_past, start=start_d.strftime("%Y-%m-%d"), end=end_d.strftime("%Y-%m-%d"))
+    results = pool.map(from_past, mycomp)
     pool.close()
     pool.join()
 
@@ -156,20 +164,21 @@ def main():
         for r in re:
             #increment sentiment of selected company
             try:
-                companies[next(index for (index, d) in enumerate(companies) if d.name == r['company'].name)].set_sentiment(float(r['sentiment']))
+                mycomp[next(index for (index, d) in enumerate(mycomp) if d.name == r['company'].name)].set_sentiment(float(r['sentiment']))
             except:
                 continue
         #average out that companies sentiment on a tweet by tweet basis
         try:
-            companies[next(index for (index, d) in enumerate(companies) if d.name == re[0]['company'].name)].sentiment = companies[next(index for (index, d) in enumerate(companies) if d.name == re[0]['company'].name)].sentiment / len(re)
+            mycomp[next(index for (index, d) in enumerate(mycomp) if d.name == re[0]['company'].name)].sentiment = mycomp[next(index for (index, d) in enumerate(mycomp) if d.name == re[0]['company'].name)].sentiment / len(re)
         except:
             continue
 
 
-    for c in companies:
-        print c.name + "|" + str(c.sentiment)
+    # for c in mycomp:
+    #     print c.name + "|" + str(c.sentiment)
 
-    update_database(companies)
+    return mycomp[0].sentiment
+    #update_database(companies)
 
 if __name__ == "__main__":
     main()
