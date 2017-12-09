@@ -11,7 +11,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 classes = ['anger','disgust', 'happy', 'neutral', 'surprise']
 class_weight = [-1.0, -0.5, 1.0, 0.0, 0.5]
 
-def predict(cmpny_name, mode):
+def predict(cmpny_name, mode=0):
 	# First, pass the path of the image
 	dir_path = os.path.dirname(os.path.realpath(__file__))
 	#filename = dir_path + '/' + cmpny_path + '/' + image_path
@@ -151,3 +151,7 @@ if __name__ == "__main__":
 	
 	#predict("companies/TEST_DIR")	
 	predict(img_path, mode)	
+	
+'''
+Code in this file was adapted from: http://cv-tricks.com/tensorflow-tutorial and changed to fit our training/validation data
+'''
