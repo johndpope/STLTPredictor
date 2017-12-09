@@ -5,14 +5,22 @@ sys.path.append("/app/app/twitterExtraction/")
 import retrieveTwitterData as sentimentScorer
 from ffmpy import FFmpeg
 import os
+def blockPrint():
+    sys.stdout = open(os.devnull, 'w')
+
+# Restore
+def enablePrint():
+    sys.stdout = sys.__stdout__
 
 def extractVideo(video_f, directory):
     ff = FFmpeg(
         inputs={video_f: None},
         outputs={directory: ['-r', '2']}
     )
-    print "executing: {0}".format(ff.cmd)
-    ff.run()
+    print "parsing video..."
+    blockPrint()
+    ff.run(stdout=sys.stdout, stderr=sys.stdout)
+    enablePrint()
 
 if __name__ =="__main__":
     if len(sys.argv) < 2:
@@ -28,6 +36,7 @@ if __name__ =="__main__":
         if e.errno != errno.EEXIST:
             raise
     extractVideo(video_f, directory + "/" + company_sym + "_image_sequence%06d.png")
+
     print "determing sentiment score..."
     sentiment_score = sentimentScorer.main(company_sym, date)
     print "sentiment score: {0}".format(sentiment_score)
