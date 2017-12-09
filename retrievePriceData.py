@@ -1,20 +1,18 @@
 import sys
 #import urllib2
-#from yahoo_finance import Share
-#from BeautifulSoup import BeautifulSoup as bs
 import pandas as pd
 import pandas_datareader.data as web
 import io
 import requests
 from datetime import datetime as dt
 
-def stock_search(symbol, startDate = (2005, 1, 1), endDate = (2017, 11, 11)):
+def stock_search(symbol, startDate = ('2005', '1', '1'), endDate = ('2017', '11', '11')):
 	if not endDate:
 		date = dt.datetime.strptime(startDate, "%y/%m/%d")
 		date = date + dt.timedelta(days=7)
 		endDate = time.strftime("%y+%m+%d")
-	start = dt(startDate[0], startDate[1], startDate[2])
-	end = dt(endDate[0], endDate[1], endDate[2])
+	start = dt.datetime(int(startDate[0]), int(startDate[1]), int(startDate[2]))
+	end = dt.datetime(int(endDate[0]), int(endDate[1]), int(endDate[2]))
 	stockData = web.DataReader(symbol, "yahoo", start, end)
 	#print stockData.head(10)
 	return stockData
@@ -42,6 +40,14 @@ class CompanyInfo(object):
 	def increment_days(self):
 		self.days += 1
 
+def getOpen(opens , day = 0):
+	return opens.iloc[day]
+def getClose(closes , day = 0):
+	return closes.iloc[day]
+def getHigh(highs, day = 0):
+	return highs.iloc[day]
+def getLow(lows, day = 0):
+	return lows.iloc[day]
 def main():
 	fileName = ""
 	try:
@@ -54,20 +60,26 @@ def main():
 	opens = [325.670013, 313.790009, 310.859985, 316.769989, 313.790009]
 	lows = [313.149994, 304.750000, 308.709991, 311.839996, 311.000000]
 	closes = [315.049988, 308.739990, 317.809998, 312.600006, 315.549988]
-	year = input("Enter the year you want to search in:")
-	month = input("Enter the month you want to search in:")
-	day = input("Enter the day you want to search in:")
+	date = input("Enter the date you want to search in:")
+	#month = input("Enter the month you want to search in:")
+	#day = input("Enter the day you want to search in:")
+	stockSymbol = ''
 	while (stockSymbol != 'n'):
 		stockSymbol = input("Enter your stock symbol, n to exit:")
 		companies.append(CompanyInfo(stockSymbol))
 	i = 0
 	for c in companies:
+		stockData = stock_search(c.symbol, startDate = date.split('-'))
+		print(stockData)
 		for i in range(0,5):
-			stockData = stock_search(c.symbol)
-			dayOpen = opens[i] #getOpen(stockData)
-			dayClose = closes[i]#getClose(stockData)
-			dayHigh = highs[i]#getHigh(stockData)
-			dayLow = lows[i]#getLow(stockData)
+			dayData = stockData.iloc[1]
+			#closes = stockData.ix['Adj Close']
+			#highs = stockData.ix['High']
+			#lows = stockData.ix['Low']
+			dayOpen = pd.to_numeric(getOpen(dayData, 0)) #opens[i]
+			dayClose = pd.to_numeric(getClose(dayData, 4)) #closes[i]
+			dayHigh = pd.to_numeric(getHigh(dayData, 1)) #highs[i]
+			dayLow = pd.to_numeric(getLow(dayData, 2)) #lows[i]
 			priceChange = dayClose - dayOpen
 			percentChange = (priceChange/dayOpen)*100 
 			if (abs(percentChange) < 1): #same
@@ -84,7 +96,7 @@ def main():
 						reversalTransform = -1*percentChange 
 					else:
 						reversalTransform = percentChange
-					c.set_bearishness((.9*(dayClose - dayLow)/dayOpen) + (.1*reversalTransform))	
+					c.set_bullishness((.9*(dayClose - dayLow)/dayOpen) + (.1*reversalTransform))	
 			else:
 				if (percentChange > 0):
 					#bullish candle
@@ -133,25 +145,6 @@ def main():
 
 dailyGain = False
 dailyLoss = False
-	#stockData = Share(stock) Deprecated/causing errors
-	#stockData = Share('ADBE')
-	#stockData.get_historical(date, date)
-
-#def get_historical_data(name, number_of_days):
-#	data = []
-#	url = "https://finance.yahoo.com/quote/" + name + "/history/"
-#	rows = bs(urllib2.urlopen(url).read()).findAll('table')[0].tbody.findAll('tr')
-#
-#	for each_row in rows:
-#		divs = each_row.findAll('td')
-#		if divs[1].span.text  != 'Dividend': #Ignore this row in the table
-			#I'm only interested in 'Open' price; For other values, play with divs[1 - 5]
-#			data.append({'Date': divs[0].span.text, 'Open': float(divs[1].span.text.replace(',',''))})
-
-#	return data[:number_of_days]
-
-#Test
-#print get_historical_data('amzn', 15)
 
 
 #print(stockData)
