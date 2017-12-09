@@ -197,8 +197,13 @@ def train(num_iteration):
             
             show_progress(epoch, feed_dict_tr, feed_dict_val, val_loss)
             saver.save(session, './emotion-model') 
+            # docker might require saver.save(session, '/app/app/emotion_tensorflow/emotion-model'
 
 
     total_iterations += num_iteration
 
 train(num_iteration=3000)
+
+'''
+Code in this file was adapted from: http://cv-tricks.com/tensorflow-tutorial and changed to fit our training/validation data
+'''
