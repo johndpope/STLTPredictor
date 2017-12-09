@@ -69,3 +69,8 @@ def extract(path_to_img, path_to_output):
 
 #for emotion in emotions: 
 #extract(img_arg, img_arg2) #Call
+
+'''
+Face extraction was adapted from : http://www.paulvangent.com/2016/04/01/emotion-recognition-with-python-opencv-and-a-face-dataset/ it is used to classify a face on an image and crop it from the image, afterwards it saves the new image of just a face in some directory
+
+'''
