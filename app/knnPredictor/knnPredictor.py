@@ -27,7 +27,8 @@ def KNN(sentiment, emotion):
 
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
 
-    clf = neighbors.KNeighborsClassifier()
+    # use k = 4 neighbors when predicting
+    clf = neighbors.KNeighborsClassifier(4)     
 
     clf.fit(X_train, y_train)
 
@@ -45,7 +46,9 @@ def KNN(sentiment, emotion):
     print "Good Buy Probability:", prediction_proba.tolist()[0][1]
     print ""
     
-    if prediction[0] == 0:
+    #print "Prediction: ", prediction_proba.tolist()[0][prediction[0]]
+    
+    if prediction.tolist()[0] == 0:
         print "Prediction: Bad Buy"
     else:
         print "Prediction: Good Buy"
@@ -87,10 +90,10 @@ def KNN(sentiment, emotion):
     plt.show()
     
     # returns 0 if bad buy, 1 if good buy
-    return prediction[0]
+    return prediction[0].tolist(), prediction_proba.tolist()[0][prediction[0]]
 
 if __name__ == "__main__":
-    KNN(0.025, 0.6);
+    KNN(0.025, 0.0);
     
     
 # some code obtained and adapted from https://pythonprogramming.net/programming-k-nearest-neighbors-machine-learning-tutorial
