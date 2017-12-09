@@ -151,3 +151,7 @@ if __name__ == "__main__":
 	
 	#predict("companies/TEST_DIR")	
 	predict(img_path, mode)	
+	
+'''
+Code in this file was adapted from: http://cv-tricks.com/tensorflow-tutorial and changed to fit our training/validation data
+'''
