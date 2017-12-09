@@ -19,7 +19,7 @@ def extract(path_to_img, path_to_output):
     #print "files: ", files
 
     directory = '/'.join(path_to_output.split('/')[:-1])
-    print "create directory:", directory
+    #print "create directory:", directory
     if not os.path.exists(directory):
 	os.makedirs(directory)
 
