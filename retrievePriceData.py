@@ -1,7 +1,5 @@
 import sys
 #import urllib2
-#from yahoo_finance import Share
-#from BeautifulSoup import BeautifulSoup as bs
 import pandas as pd
 import pandas_datareader.data as web
 import io
@@ -74,7 +72,6 @@ def main():
 		stockData = stock_search(c.symbol, startDate = date.split('-'))
 		print(stockData)
 		for i in range(0,5):
-			print(date.split('-'))
 			dayData = stockData.iloc[1]
 			#closes = stockData.ix['Adj Close']
 			#highs = stockData.ix['High']
@@ -99,7 +96,7 @@ def main():
 						reversalTransform = -1*percentChange 
 					else:
 						reversalTransform = percentChange
-					c.set_bearishness((.9*(dayClose - dayLow)/dayOpen) + (.1*reversalTransform))	
+					c.set_bullishness((.9*(dayClose - dayLow)/dayOpen) + (.1*reversalTransform))	
 			else:
 				if (percentChange > 0):
 					#bullish candle
@@ -148,25 +145,6 @@ def main():
 
 dailyGain = False
 dailyLoss = False
-	#stockData = Share(stock) Deprecated/causing errors
-	#stockData = Share('ADBE')
-	#stockData.get_historical(date, date)
-
-#def get_historical_data(name, number_of_days):
-#	data = []
-#	url = "https://finance.yahoo.com/quote/" + name + "/history/"
-#	rows = bs(urllib2.urlopen(url).read()).findAll('table')[0].tbody.findAll('tr')
-#
-#	for each_row in rows:
-#		divs = each_row.findAll('td')
-#		if divs[1].span.text  != 'Dividend': #Ignore this row in the table
-			#I'm only interested in 'Open' price; For other values, play with divs[1 - 5]
-#			data.append({'Date': divs[0].span.text, 'Open': float(divs[1].span.text.replace(',',''))})
-
-#	return data[:number_of_days]
-
-#Test
-#print get_historical_data('amzn', 15)
 
 
 #print(stockData)
