@@ -138,9 +138,9 @@ def analyzeTrends(symbol, date = '2017-11-11'):
 				rally = (openToLow/lowToClose)
 				if(percentChange < -50.0):
 					#1st fibonacci number
-					c.set_bearishness(((percentChange*1.5)/100.0)*-1.0)
+					c.set_bearishness(((percentChange*1.5)/100.0))
 				else:
-					c.set_bearishness(((percentChange * (1.0 - rally))/100.0)*-1.0)
+					c.set_bearishness(((percentChange * (1.0 - rally))/100.0))
 	return c
 
 def main():
