@@ -26,7 +26,7 @@ def getHigh(highs, day = 0):
 	return highs.iloc[day]
 def getLow(lows, day = 0):
 	return lows.iloc[day]
- 
+
 if __name__ == '__main__':
 	main()
 class CompanyInfo(object):
@@ -49,7 +49,7 @@ class CompanyInfo(object):
 		print("BULL DAYS:")
 		for i in self.bulls:
 			print(i)
-	def printBears(self):	
+	def printBears(self):
 		print("BEAR DAYS:")
 		for i in self.bears:
 			print(i)
@@ -72,7 +72,7 @@ class CompanyInfo(object):
 		if(self.bullishness > abs(self.bearishness)):
 			return 1
 		return 0
-	def getBearBullRatio(self):#normalization to a value between 0 and 1 
+	def getBearBullRatio(self):#normalization to a value between 0 and 1
 		ratio = 1.0
 		if(self.bearishness != 0):
 			ratio = self.bullishness/(abs(self.bearishness) + self.bullishness)
@@ -84,7 +84,7 @@ class CompanyInfo(object):
 def analyzeTrends(symbol, date = '2017-11-11'):
 	c = CompanyInfo(symbol)
 	stockData = stock_search(symbol, startDate = date.split('-'))
-	print(stockData)
+	#print(stockData)
 	for i in range(0,5):
 		dayData = stockData.iloc[i]
 		dayOpen = pd.to_numeric(getOpen(dayData, 0)) #opens[i]
@@ -92,12 +92,12 @@ def analyzeTrends(symbol, date = '2017-11-11'):
 		dayHigh = pd.to_numeric(getHigh(dayData, 1)) #highs[i]
 		dayLow = pd.to_numeric(getLow(dayData, 2)) #lows[i]
 		priceChange = dayClose - dayOpen
-		percentChange = (priceChange/dayOpen)*100.0 
+		percentChange = (priceChange/dayOpen)*100.0
 		if (abs(percentChange) < 1.0): #Stock didn't have a big change
 			if ((dayHigh - dayClose)/dayOpen > .1):
 				#bearish reversal
 				if(percentChange < 0.0):
-					reversalBias = percentChange 
+					reversalBias = percentChange
 				else:
 					reversalBias = -1.0*percentChange
 				weight = abs(percentChange)/(((dayHigh - dayClose)/dayOpen)*100+abs(percentChange))
@@ -105,7 +105,7 @@ def analyzeTrends(symbol, date = '2017-11-11'):
 			elif ((dayClose - dayLow)/dayOpen > .1):
 				#bullish reversal
 				if(percentChange < 0.0):
-					reversalBias = -1.0*percentChange 
+					reversalBias = -1.0*percentChange
 				else:
 					reversalBias = percentChange
 				weight = abs(percentChange)/((((dayClose - dayLow)/dayOpen)*100)+abs(percentChange))
@@ -174,11 +174,10 @@ def main():
 			companyResults.printBulls()
 		else:
 			print("There are no days with positive trends.")
-		if(companyResults.bearishness != 0.0):	
+		if(companyResults.bearishness != 0.0):
 			companyResults.printBears()
 		else:
 			print("There are no days with negative trends.")
 		companyResults.printWeeklyResults()
 		print("The bullish to bearish ratio is " + str(companyResults.getBearBullRatio()))
 		print("The overall normalized value for the analysis is: " + str(companyResults.getNormalizedResult()))
-
