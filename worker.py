@@ -45,10 +45,10 @@ if __name__ =="__main__":
         raise
     extractVideo(video_f, directory + "/" + company_sym + "_image_sequence%06d.png")
 
-    print "determing sentiment score..."
+    print "determing sentiment score for {0} during the week {1}...".format(company_sym, date)
     sentiment_score = sentimentScorer.main(company_sym, date)
     print "sentiment score: {0}".format(sentiment_score)
-    print "determining emotional score..."
+    print "determining emotional score for frames found in {0}...".format(directory)
     emotional_score = emotionalRecognizer.predict("companies/" + video_f[:-4])
     print "emotional score: {0}".format(emotional_score)
     prediction, probability = Predictor.KNN(sentiment_score, emotional_score)
