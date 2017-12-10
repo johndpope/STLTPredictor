@@ -8,7 +8,7 @@ import data
 from multiprocessing.dummy import Pool as ThreadPool
 import csv
 import sys
-sys.path.append("/app/app/twitterExtraction/GetOldTweets-python-master/")
+sys.path.append("./GetOldTweets-python-master/")
 import got
 from functools import partial
 
@@ -136,11 +136,13 @@ def update_database(companies):
 def main(company, start_date):
     # create array of Company objects from selected csv file
     companies = []
-    with open('/app/app/static/companyList.csv', 'r') as f:
+    with open('../static/companyList.csv', 'r') as f:
         reader = csv.reader(f)
         for row in reader:
             companies.append(Company(row[0], row[1], row[2]))
-
+    if len(companies) == 0:
+        print "{0} not found".format(company)
+        return 0
     mycomp = [x for x in companies if x.symbol == company]
 
 
@@ -181,4 +183,4 @@ def main(company, start_date):
     #update_database(companies)
 
 if __name__ == "__main__":
-    main()
+    print main("TSLA", "2017-04-30")
