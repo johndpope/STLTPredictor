@@ -4,11 +4,11 @@ import pandas as pd
 import pandas_datareader.data as web
 import io
 import requests
-from datetime import datetime as dt
+import datetime as dt
 
 def stock_search(symbol, startDate = ('2005', '1', '1'), endDate = ('2017', '11', '11')):
 	if not endDate:
-		date = dt.datetime.strptime(startDate, "%y/%m/%d")
+		date = dt.datetime.strptime(startDate, "%y-%m-%d")
 		date = date + dt.timedelta(days=7)
 		endDate = time.strftime("%y+%m+%d")
 	start = dt.datetime(int(startDate[0]), int(startDate[1]), int(startDate[2]))
