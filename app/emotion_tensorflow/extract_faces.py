@@ -4,10 +4,10 @@ import sys
 import os
 
 
-faceDet = cv2.CascadeClassifier("haarcascade/haarcascade_frontalface_default.xml")
-faceDet_two = cv2.CascadeClassifier("haarcascade/haarcascade_frontalface_alt2.xml")
-faceDet_three = cv2.CascadeClassifier("haarcascade/haarcascade_frontalface_alt.xml")
-faceDet_four = cv2.CascadeClassifier("haarcascade/haarcascade_frontalface_alt_tree.xml")
+faceDet = cv2.CascadeClassifier("/app/app/emotion_tensorflow/haarcascade/haarcascade_frontalface_default.xml")
+faceDet_two = cv2.CascadeClassifier("/app/app/emotion_tensorflow/haarcascade/haarcascade_frontalface_alt2.xml")
+faceDet_three = cv2.CascadeClassifier("/app/app/emotion_tensorflow/haarcascade/haarcascade_frontalface_alt.xml")
+faceDet_four = cv2.CascadeClassifier("/app/app/emotion_tensorflow/haarcascade/haarcascade_frontalface_alt_tree.xml")
 
 #emotions = ["neutral", "anger", "contempt", "disgust", "fear", "happy", "sadness", "surprise"] #Define emotions
 
