@@ -11,7 +11,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 classes = ['anger','disgust', 'happy', 'neutral', 'surprise']
 class_weight = [-1.0, -0.5, 1.0, 0.0, 0.5]
 
-def predict(cmpny_name, mode=0):
+def predict(cmpny_name, mode=1):
 	# First, pass the path of the image
 	dir_path = os.path.dirname(os.path.realpath(__file__))
 	#filename = dir_path + '/' + cmpny_path + '/' + image_path
@@ -51,7 +51,7 @@ def predict(cmpny_name, mode=0):
 		#img_location = extract(predict_img, predict_img.split("/")[-1])
 
 		if mode is 1:
-			img_location = extract(predict_img, "extracted_data/" + cmpny_name.split("/")[-1] + "/" + predict_img.split("/")[-1])
+			img_location = extract(predict_img, "/app/app/emotion_tensorflow/extracted_data/" + cmpny_name.split("/")[-1] + "/" + predict_img.split("/")[-1])
 		else:
 			img_location = predict_img
 
