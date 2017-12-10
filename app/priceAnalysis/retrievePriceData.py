@@ -4,11 +4,11 @@ import pandas as pd
 import pandas_datareader.data as web
 import io
 import requests
-from datetime import datetime as dt
+import datetime as dt
 
 def stock_search(symbol, startDate = ('2005', '1', '1'), endDate = ('2017', '11', '11')):
 	if not endDate:
-		date = dt.datetime.strptime(startDate, "%y/%m/%d")
+		date = dt.datetime.strptime(startDate, "%y-%m-%d")
 		date = date + dt.timedelta(days=7)
 		endDate = time.strftime("%y+%m+%d")
 	start = dt.datetime(int(startDate[0]), int(startDate[1]), int(startDate[2]))
@@ -120,7 +120,9 @@ def analyzeTrends(symbol, date = '2017-11-11'):
 				#bullish candle
 				openToHigh = dayHigh - dayOpen
 				highToClose = dayHigh - dayClose
-				retracement = (openToHigh/highToClose)
+				retracement = 0.0
+				if(highToClose != 0):
+					retracement = (openToHigh/highToClose)/100
 				if(abs(retracement - .2352) < .02):
 					#1st fibonacci number
 					c.set_bullishness((percentChange*1.25)/100.0)
@@ -135,12 +137,14 @@ def analyzeTrends(symbol, date = '2017-11-11'):
 				#bearish candle
 				openToLow = dayOpen - dayLow
 				lowToClose = dayClose - dayLow
-				rally = (openToLow/lowToClose)
+				rally = 0.0
+				if(lowToClose != 0):
+					rally = (openToLow/lowToClose)/100
 				if(percentChange < -50.0):
 					#1st fibonacci number
-					c.set_bearishness(((percentChange*1.5)/100.0)*-1.0)
+					c.set_bearishness(((percentChange*1.5)/100.0))
 				else:
-					c.set_bearishness(((percentChange * (1.0 - rally))/100.0)*-1.0)
+					c.set_bearishness(((percentChange * (1.0 - rally))/100.0))
 	return c
 
 def main():
