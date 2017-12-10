@@ -120,7 +120,9 @@ def analyzeTrends(symbol, date = '2017-11-11'):
 				#bullish candle
 				openToHigh = dayHigh - dayOpen
 				highToClose = dayHigh - dayClose
-				retracement = (openToHigh/highToClose)
+				retracement = 0.0
+				if(highToClose != 0):
+					retracement = (openToHigh/highToClose)/100
 				if(abs(retracement - .2352) < .02):
 					#1st fibonacci number
 					c.set_bullishness((percentChange*1.25)/100.0)
@@ -135,7 +137,9 @@ def analyzeTrends(symbol, date = '2017-11-11'):
 				#bearish candle
 				openToLow = dayOpen - dayLow
 				lowToClose = dayClose - dayLow
-				rally = (openToLow/lowToClose)
+				rally = 0.0
+				if(lowToClose != 0):
+					rally = (openToLow/lowToClose)/100
 				if(percentChange < -50.0):
 					#1st fibonacci number
 					c.set_bearishness(((percentChange*1.5)/100.0))
