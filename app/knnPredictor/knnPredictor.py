@@ -18,9 +18,10 @@ def KNN(sentiment, emotion):
     # drop any unwanted fields
     df.drop(['Symbol'], 1, inplace=True)
     df.drop(['Start'], 1, inplace=True)
+    df.drop(['Bullishness'], 1, inplace=True)
 
-    X = np.array(df.drop(['Bullishness'], 1))
-    y = np.array(df['Bullishness'])
+    X = np.array(df.drop(['Bullish'], 1))
+    y = np.array(df['Bullish'])
 
     x_list = X.tolist()
     y_list = y.tolist()
@@ -28,7 +29,7 @@ def KNN(sentiment, emotion):
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size=0.2)
 
     # use k = 4 neighbors when predicting
-    clf = neighbors.KNeighborsClassifier(4)
+    clf = neighbors.KNeighborsClassifier(3)
 
     clf.fit(X_train, y_train)
 
