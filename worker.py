@@ -54,7 +54,7 @@ if __name__ =="__main__":
         print "{0} already exists".format(directory)
         raise
     extractVideo(video_f, directory + "/" + company_sym + "_image_sequence%06d.png")
-
+    enablePrint() #ensure that we can print
     print "determing sentiment score for {0} during the week {1}...".format(company_sym, date)
     sentiment_score = sentimentScorer.main(company_sym, date)
     print "sentiment score: {0}".format(sentiment_score)
