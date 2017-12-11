@@ -24,3 +24,5 @@ To Access docker machine in interactive mode (once finished building):
 Run the following once in the machine:
 
   run `python worker.py NKE_2012-08-16.mp4` or another video placed in the root folder (depends on length of video... ~30s to ~4-5 minutes)
+
+Because of some limitations with docker, we cannot show a visual representation of the results as there is technically not a DISPLAY to display to
