@@ -42,20 +42,22 @@ def KNN(sentiment, emotion):
 
     prediction = clf.predict(example_measures)
     prediction_proba = clf.predict_proba(example_measures)
+    
     """
     print "Bad Buy Probability:", prediction_proba.tolist()[0][0]
     print "Good Buy Probability:", prediction_proba.tolist()[0][1]
     print ""
 
     #print "Prediction: ", prediction_proba.tolist()[0][prediction[0]]
-
+    
     if prediction.tolist()[0] == 0:
         print "Prediction: Bad Buy"
     else:
         print "Prediction: Good Buy"
 
     #print(prediction[0])
-
+    """
+    
     k_list = []     # build the good_buy class(k = black points)
     r_list = []     # build the bad_buy class (r= red points)
 
@@ -78,15 +80,18 @@ def KNN(sentiment, emotion):
 
     black_patch = mpatches.Patch(color='black', label='Good Buy')
     red_patch = mpatches.Patch(color='red', label='Bad Buy')
+    blue_patch = mpatches.Patch(color='blue', label='New Prediction')
 
-    plt.legend(handles=[black_patch, red_patch])
+    plt.legend(handles=[black_patch, red_patch, blue_patch])
 
     [[plt.scatter(ii[0],ii[1],s=100,color=i) for ii in dataset[i]] for i in dataset]
-    plt.scatter(new_features[0], new_features[1], s=100)
+    plt.scatter(new_features[0], new_features[1], s=100,color="blue")
 
     plt.title('STLT Stock Predictor')
     plt.xlabel('Sentiment')
     plt.ylabel('Emotion')
+
+    plt.savefig("/app/prediction_graph.png")
 
     plt.show()
     """
