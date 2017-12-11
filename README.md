@@ -29,16 +29,10 @@ Run the following once in the machine:
 
 [Training] the CNN is different than predicting, to train follows the following steps (once in the docker environment):
 
-    1) Download the training data on my google drive: 
-        https://drive.google.com/open?id=1DEWfsOKDVQI3ex0dnDpjIZsQCPadRSMh
-    
-    2) copy the folders inside the .zip file just downloaded to the directory "app/emotion_tensorflow"
-    
-    3) build docker once the steps above are completed (from the beginning of this README file), then once inside the docker machine go to the following directory:
-    
+    1) Once in docker (in interactive mode), go the the training directory 
         $ cd /app/app/emotion_tensorflow
         
-    4) Run the following command:
+    2) Then, run the following command:
         $ python train.py
         
 Training will take a long time, anywhere from 30min-1hr.
