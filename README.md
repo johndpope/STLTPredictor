@@ -15,7 +15,7 @@ Dependencies:
 
 To Build:
 
-  run `docker build -t myapp .` (~7-8 minutes)
+  run `docker build -t myapp .` (~7-8 minutes depending on internet connection and CPU)
 
 To Access docker machine in interactive mode (once finished building):
 
